@@ -1,48 +1,56 @@
-import java.math.BigDecimal;
-
 public class Automovil extends Vehiculo {
 
-    private final int pasajeros;
-    private final boolean automatico;
+    private int cantidadPasajeros;
+    private boolean automatico;
 
     public Automovil(String placa, String marca, String modelo,
-                     BigDecimal tarifa, int pasajeros,
+                     double tarifaDiaria, int cantidadPasajeros,
                      boolean automatico) {
 
-        super(placa, marca, modelo, tarifa);
+        super(placa, marca, modelo, tarifaDiaria);
 
-        if (pasajeros <= 0) {
+        if (cantidadPasajeros <= 0) {
             throw new IllegalArgumentException(
-                "Los pasajeros deben ser mayores que cero."
+                    "La cantidad de pasajeros debe ser mayor que cero."
             );
         }
 
-        this.pasajeros = pasajeros;
+        this.cantidadPasajeros = cantidadPasajeros;
         this.automatico = automatico;
     }
 
+    public int getCantidadPasajeros() {
+        return cantidadPasajeros;
+    }
+
+    public boolean isAutomatico() {
+        return automatico;
+    }
+
     @Override
-    public BigDecimal calcularCosto(int dias) {
-        BigDecimal costo = calcularBase(dias);
+    public double calcularCosto(int dias) {
 
-        if (automatico) {
-            BigDecimal recargo = BigDecimal.valueOf(50)
-                .multiply(BigDecimal.valueOf(dias));
-
-            costo = costo.add(recargo);
+        if (dias <= 0) {
+            throw new IllegalArgumentException(
+                    "Los días deben ser enteros positivos."
+            );
         }
 
-        return redondear(costo);
+        double costo = getTarifaDiaria() * dias;
+
+        if (automatico) {
+            costo += 50.0 * dias;
+        }
+
+        return costo;
     }
 
     @Override
-    public String getCategoria() {
-        return "Automovil";
-    }
-
-    @Override
-    public String getCaracteristicas() {
-        return pasajeros + " pasajeros | "
-            + (automatico ? "Automatico" : "Manual");
+    public String obtenerInformacion() {
+        return "Automóvil | "
+                + super.obtenerInformacion()
+                + " | Pasajeros: " + cantidadPasajeros
+                + " | Transmisión: "
+                + (automatico ? "Automática" : "Manual");
     }
 }

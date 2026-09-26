@@ -1,104 +1,82 @@
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Locale;
-
 public abstract class Vehiculo {
 
-    private final String placa;
-    private final String marca;
-    private final String modelo;
-    private final BigDecimal tarifaDiaria;
+    private String placa;
+    private String marca;
+    private String modelo;
+    private double tarifaDiaria;
     private boolean disponible;
 
     public Vehiculo(String placa, String marca, String modelo,
-                    BigDecimal tarifaDiaria) {
+                    double tarifaDiaria) {
 
-        this.placa = normalizarPlaca(placa);
-        this.marca = textoValido(marca);
-        this.modelo = textoValido(modelo);
-        this.tarifaDiaria = positivo(tarifaDiaria);
+        if (placa == null || placa.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "La placa no puede estar vacía."
+            );
+        }
+
+        if (marca == null || marca.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "La marca no puede estar vacía."
+            );
+        }
+
+        if (modelo == null || modelo.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "El modelo no puede estar vacío."
+            );
+        }
+
+        if (tarifaDiaria <= 0) {
+            throw new IllegalArgumentException(
+                    "La tarifa diaria debe ser mayor que cero."
+            );
+        }
+
+        this.placa = placa.trim();
+        this.marca = marca.trim();
+        this.modelo = modelo.trim();
+        this.tarifaDiaria = tarifaDiaria;
         this.disponible = true;
-    }
-
-    public static String normalizarPlaca(String placa) {
-        return textoValido(placa).toUpperCase(Locale.ROOT);
-    }
-
-    private static String textoValido(String texto) {
-        if (texto == null || texto.trim().isEmpty()) {
-            throw new IllegalArgumentException(
-                "La placa, marca y modelo no pueden estar vacios."
-            );
-        }
-
-        return texto.trim();
-    }
-
-    protected static BigDecimal positivo(BigDecimal valor) {
-        if (valor == null || valor.signum() <= 0) {
-            throw new IllegalArgumentException(
-                "La tarifa y la capacidad deben ser mayores que cero."
-            );
-        }
-
-        return valor;
-    }
-
-    protected BigDecimal calcularBase(int dias) {
-        if (dias <= 0) {
-            throw new IllegalArgumentException(
-                "Los dias deben ser enteros positivos."
-            );
-        }
-
-        return tarifaDiaria.multiply(BigDecimal.valueOf(dias));
-    }
-
-    protected BigDecimal redondear(BigDecimal monto) {
-        return monto.setScale(2, RoundingMode.HALF_UP);
     }
 
     public String getPlaca() {
         return placa;
     }
 
+    public String getMarca() {
+        return marca;
+    }
+
+    public String getModelo() {
+        return modelo;
+    }
+
+    public double getTarifaDiaria() {
+        return tarifaDiaria;
+    }
+
     public boolean isDisponible() {
         return disponible;
     }
 
-    void alquilar() {
-        if (!disponible) {
-            throw new IllegalStateException(
-                "El vehiculo ya esta alquilado."
-            );
-        }
-
+    public void alquilar() {
         disponible = false;
     }
 
-    void devolver() {
-        if (disponible) {
-            throw new IllegalStateException(
-                "El vehiculo ya esta disponible."
-            );
-        }
-
+    public void devolver() {
         disponible = true;
     }
 
-    public abstract BigDecimal calcularCosto(int dias);
+    public abstract double calcularCosto(int dias);
 
-    public abstract String getCategoria();
-
-    public abstract String getCaracteristicas();
-
-    @Override
-    public String toString() {
-        return getCategoria()
-            + " | " + placa
-            + " | " + marca + " " + modelo
-            + " | tarifa: Q" + redondear(tarifaDiaria).toPlainString()
-            + " | " + getCaracteristicas()
-            + " | " + (disponible ? "Disponible" : "Alquilado");
+    public String obtenerInformacion() {
+        return "Placa: " + placa
+                + " | Marca: " + marca
+                + " | Modelo: " + modelo
+                + " | Tarifa diaria: Q"
+                + String.format("%.2f", tarifaDiaria)
+                + " | Disponible: "
+                + (disponible ? "Sí" : "No");
     }
 }
