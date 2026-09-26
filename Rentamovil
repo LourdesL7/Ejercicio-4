@@ -16,11 +16,6 @@ public class RentaMovil {
             return false;
         }
 
-        if (vehiculo.getPlaca() == null
-                || vehiculo.getPlaca().trim().isEmpty()) {
-            return false;
-        }
-
         if (buscarVehiculo(vehiculo.getPlaca()) != null) {
             return false;
         }
@@ -31,12 +26,15 @@ public class RentaMovil {
 
     public Vehiculo buscarVehiculo(String placa) {
 
-        if (placa == null) {
+        if (placa == null || placa.trim().isEmpty()) {
             return null;
         }
 
         for (Vehiculo vehiculo : vehiculos) {
-            if (vehiculo.getPlaca().equalsIgnoreCase(placa.trim())) {
+
+            if (vehiculo.getPlaca().equalsIgnoreCase(
+                    placa.trim())) {
+
                 return vehiculo;
             }
         }
@@ -94,14 +92,18 @@ public class RentaMovil {
     public void mostrarFlota() {
 
         if (vehiculos.isEmpty()) {
-            System.out.println("No hay vehículos registrados.");
+            System.out.println(
+                    "No hay vehículos registrados."
+            );
             return;
         }
 
         System.out.println("\n--- FLOTA DE RENTAMOVIL ---");
 
         for (Vehiculo vehiculo : vehiculos) {
-            System.out.println(vehiculo.obtenerInformacion());
+            System.out.println(
+                    vehiculo.obtenerInformacion()
+            );
         }
     }
 
@@ -115,30 +117,46 @@ public class RentaMovil {
         for (Vehiculo vehiculo : vehiculos) {
 
             if (vehiculo.isDisponible()) {
+
                 disponibles++;
+
             } else if (vehiculo instanceof Automovil) {
+
                 automovilesAlquilados++;
+
             } else if (vehiculo instanceof Motocicleta) {
+
                 motocicletasAlquiladas++;
+
             } else if (vehiculo instanceof CamionetaCarga) {
+
                 camionetasAlquiladas++;
             }
         }
 
         System.out.println("\n--- REPORTE GENERAL ---");
-        System.out.println("Total de vehículos: " + vehiculos.size());
-        System.out.println("Vehículos disponibles: " + disponibles);
 
         System.out.println(
-                "Automóviles alquilados: " + automovilesAlquilados
+                "Total de vehículos: " + vehiculos.size()
         );
 
         System.out.println(
-                "Motocicletas alquiladas: " + motocicletasAlquiladas
+                "Vehículos disponibles: " + disponibles
         );
 
         System.out.println(
-                "Camionetas de carga alquiladas: " + camionetasAlquiladas
+                "Automóviles alquilados: "
+                        + automovilesAlquilados
+        );
+
+        System.out.println(
+                "Motocicletas alquiladas: "
+                        + motocicletasAlquiladas
+        );
+
+        System.out.println(
+                "Camionetas de carga alquiladas: "
+                        + camionetasAlquiladas
         );
 
         System.out.printf(
